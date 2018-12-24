@@ -1,6 +1,10 @@
 # ITEMFEED #
 
 Feed Generation of the Item and Variant attributes changes.
+ITEMFEED Micro service is to update the user changes in corresponding table and generate each update as an event. Push Each event to kafka for generating feed. Refer
+```
+	images/ItemAndVariantArchitecture.png
+```
 Version - 0.0.1
 
 ## Setup ##
