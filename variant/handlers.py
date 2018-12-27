@@ -86,10 +86,7 @@ class UpdateVariantHandler(RequestHandler):
             atrbt.append("quantity")
         session.add(varintObj)
         if "property" in body:
-            propertObj = session.query(Property).filter(Property.variant==varintObj).all()
-            for prop in propertObj:
-                prop.status = "deleted"
-                varintObj.property.append(prop)
+            session.query(Property).filter(Property.variant==varintObj).update({Property.status: "deleted"})
             for prptyObj in body["property"]:
                 try:
                     proprtObj = Property(option=prptyObj["option"], value=prptyObj["value"])
