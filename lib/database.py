@@ -2,7 +2,9 @@ from config import settings
 from pymongo import MongoClient, database as pymongodb
 from sqlalchemy import create_engine
 from item.models import Item
+import sqlalchemy.pool as pool
 from variant.models import Variant, Property
+import psycopg2
 
 DATABASES = settings.DATABASES
 
@@ -127,6 +129,19 @@ class PostgreSQLHandler(DatabaseDriver):
                 super().__init__(db_obj)
                 self.state = "PROCESSING"                
 
+        def getconn(self):
+            uesr = ""
+            if self.__USERNAME__:
+                user = self.__USERNAME__
+            pwd = ""
+            if self.__PASSWORD__:
+                pwd = self.__PASSWORD__
+            contn = psycopg2.connect(database = self.__DATABASE__, user = user, password = pwd, 
+                    host = self.__HOST__, port = self.__PORT__)
+            if not contn:
+                raise ValueError("Invalid connection object generated")
+            return contn
+
         def makeUrl(self):
             uesr = ""
             if self.__USERNAME__:
@@ -139,9 +154,9 @@ class PostgreSQLHandler(DatabaseDriver):
             return str(url)
 
         def connect(self):
+                mypool = pool.QueuePool(self.getconn, max_overflow=10, pool_size=5)
                 db_url = self.makeUrl()
-                print(db_url)
-                self.__CONNECTION__ = create_engine(db_url, echo=settings.DEBUG)
+                self.__CONNECTION__ = create_engine(db_url, pool=mypool, echo=settings.DEBUG)
 
                 if not self.__CONNECTION__:
                         raise ValueError("Invalid connection object generated")
