@@ -1,4 +1,4 @@
-arrow==0.12.1
+arrow==0.15.1
 kafka-python==1.4.4
 pathlib==1.0.1
 psycopg2-binary==2.7.6.1
